@@ -52,6 +52,10 @@ workflows:
           printf '%s' "$IOS_P12_BASE64" | tr -d '[:space:]' | openssl base64 -d -A > /tmp/nw.p12
           security import /tmp/nw.p12 -k "$KEYCHAIN" -P "$IOS_P12_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k nwpass "$KEYCHAIN"
+          # 安装 App Store 描述文件（仓库内，含 Sign in with Apple 能力）
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp ios/App/signing/NightWindow_AppStore.mobileprovision \
+             "$HOME/Library/MobileDevice/Provisioning Profiles/90c393f4-e0b6-4c44-9dc5-9522bcbd0530.mobileprovision"
           mkdir -p ~/.appstoreconnect/private_keys
           echo "$APP_STORE_CONNECT_API_KEY_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
 
@@ -64,22 +68,15 @@ workflows:
         script: |
           set -e
           cd ios/App
-          # 不要在命令行传 CODE_SIGN_IDENTITY：它会作用到 Pods 里的每个子 target
-          # （如 GoogleUtilities），导致「automatically signed 但手动指定了证书」冲突。
-          # Release + Automatic 会自动选 Apple Distribution 证书。
+          # 签名方式写在 App target 的 build settings 里（Manual + Apple Distribution +
+          # PROVISIONING_PROFILE_SPECIFIER），命令行不再传任何签名参数，
+          # 避免污染 Pods 里的第三方 target。
           xcodebuild archive \
             -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
-            -sdk iphoneos \
             -destination "generic/platform=iOS" \
-            -archivePath "$CM_BUILD_DIR/build/ios/App.xcarchive" \
-            DEVELOPMENT_TEAM="$TEAM_ID" \
-            CODE_SIGN_STYLE=Automatic \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 \
-            -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_KEY_ID" \
-            -authenticationKeyIssuerID "$APP_STORE_CONNECT_API_KEY_ISSUER_ID"
+            -archivePath "$CM_BUILD_DIR/build/ios/App.xcarchive"
 
       - name: Export IPA
         script: |
@@ -92,9 +89,14 @@ workflows:
             <key>method</key>
             <string>app-store-connect</string>
             <key>signingStyle</key>
-            <string>automatic</string>
+            <string>manual</string>
             <key>teamID</key>
             <string>N9A8A7Y8WQ</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.lugman.nightwindow</key>
+              <string>Night Window AppStore SIA</string>
+            </dict>
             <key>uploadSymbols</key>
             <true/>
             <key>uploadBitcode</key>
