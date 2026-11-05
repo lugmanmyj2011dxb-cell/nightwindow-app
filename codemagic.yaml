@@ -28,7 +28,19 @@ workflows:
 
       - name: Capacitor sync (iOS)
         script: |
-          npx cap sync ios
+          # pod install 依赖 CocoaPods CDN / Firebase 二进制源，偶发 504 时间，
+          # 失败自动重试（已下载的缓存会保留，后续尝试更快）
+          for i in 1 2 3 4; do
+            echo "=== cap sync attempt $i ==="
+            if npx cap sync ios; then
+              echo "cap sync succeeded"
+              exit 0
+            fi
+            echo "attempt $i failed, retrying in 30s..."
+            sleep 30
+          done
+          echo "cap sync failed after 4 attempts"
+          exit 1
 
       - name: Import signing assets
         script: |
