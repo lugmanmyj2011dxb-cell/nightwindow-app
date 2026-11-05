@@ -19,7 +19,6 @@ workflows:
       cocoapods: default
       vars:
         TEAM_ID: N9A8A7Y8WQ
-        SIGN_IDENTITY: "Apple Distribution: YINJUN MA (N9A8A7Y8WQ)"
         BUNDLE_ID: com.lugman.nightwindow
     scripts:
       - name: Install npm dependencies
@@ -65,15 +64,18 @@ workflows:
         script: |
           set -e
           cd ios/App
+          # 不要在命令行传 CODE_SIGN_IDENTITY：它会作用到 Pods 里的每个子 target
+          # （如 GoogleUtilities），导致「automatically signed 但手动指定了证书」冲突。
+          # Release + Automatic 会自动选 Apple Distribution 证书。
           xcodebuild archive \
             -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
             -sdk iphoneos \
+            -destination "generic/platform=iOS" \
             -archivePath "$CM_BUILD_DIR/build/ios/App.xcarchive" \
             DEVELOPMENT_TEAM="$TEAM_ID" \
             CODE_SIGN_STYLE=Automatic \
-            CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
             -allowProvisioningUpdates \
             -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 \
             -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_KEY_ID" \
