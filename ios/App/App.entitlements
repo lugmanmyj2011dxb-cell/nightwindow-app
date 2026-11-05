@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Sign in with Apple（App Store 审核指南 4.8 条：有第三方登录就必须提供）。
+	     前提：Apple Developer 后台的 App ID（com.lugman.nightwindow）也要勾选
+	     "Sign In with Apple" capability，并重新生成描述文件，否则真机打包签名会报错。 -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+</dict>
+</plist>

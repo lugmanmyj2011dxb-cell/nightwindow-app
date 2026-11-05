@@ -1,0 +1,13 @@
+// 眠窗 · Firebase Storage 规则
+// 视频素材桶：公开可读（App 直接拉取远程场景视频），只允许通过 CLI / 控制台上传
+// deploy：firebase deploy --only storage
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read: if true;            // 任何人可读（App 拉视频必需）
+      allow write: if false;           // 禁止客户端上传（只通过 CLI / 控制台手动传）
+      allow list: if false;            // 禁止 list（隐藏文件列表）
+    }
+  }
+}

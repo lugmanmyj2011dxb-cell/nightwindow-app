@@ -1,0 +1,21 @@
+{
+  "appId": "com.lugman.nightwindow",
+  "appName": "眠窗",
+  "webDir": "www",
+  "backgroundColor": "#0c0e13",
+  "android": {
+    "backgroundColor": "#0c0e13",
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 800,
+      "backgroundColor": "#0c0e13",
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    },
+    "FirebaseAuthentication": {
+      "skipNativeAuth": true
+    }
+  }
+}

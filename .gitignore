@@ -1,0 +1,40 @@
+# dependencies
+node_modules/
+functions/node_modules/
+
+# iOS build artifacts (Codemagic 会自己跑 pod install / cap sync)
+ios/App/Pods/
+ios/App/App/public/
+ios/App/build/
+ios/App/DerivedData/
+ios/App/App.xcworkspace/xcuserdata/
+ios/App/App.xcodeproj/xcuserdata/
+
+# Android build artifacts
+android/.gradle/
+android/build/
+android/app/build/
+android/capacitor-cordova-android-plugins/
+android/local.properties
+
+# 远程素材（已在 Firebase Hosting，不进仓库）
+hosting-public/*.mp4
+hosting-public/*.webm
+
+# 工具与产物
+_shot-tools/
+*.aab
+*.apk
+*.ipa
+*.xcarchive
+
+# 密钥（绝对不要提交）
+*.keystore
+*.jks
+*.p8
+.env
+.env.*
+
+# 系统文件
+.DS_Store
+Thumbs.db

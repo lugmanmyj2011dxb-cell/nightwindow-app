@@ -1,0 +1,29 @@
+{
+  "name": "nightwindow-sleep-sounds",
+  "version": "1.0.0",
+  "description": "眠窗 · 木屋夜声 - 白噪音助眠 App",
+  "private": true,
+  "scripts": {
+    "sync": "npx cap sync android",
+    "open:android": "npx cap open android",
+    "sync:ios": "npx cap sync ios",
+    "open:ios": "npx cap open ios",
+    "build:purchases": "esbuild www/js/vendor/capacitor-purchases-entry.js --bundle --outfile=www/js/vendor/capacitor-purchases.bundle.js --format=iife"
+  },
+  "dependencies": {
+    "@anuradev/capacitor-background-mode": "^8.1.0",
+    "@capacitor-firebase/authentication": "^8.5.2",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/filesystem": "^8.0.0",
+    "@capacitor/local-notifications": "^8.0.0",
+    "@revenuecat/purchases-capacitor": "^13.7.3"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/ios": "^8.5.3",
+    "docx": "^9.12.0",
+    "esbuild": "^0.24.0"
+  }
+}

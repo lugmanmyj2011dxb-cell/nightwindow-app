@@ -1,0 +1,56 @@
+# Codemagic CI/CD — Night Window iOS (Capacitor 8)
+# 使用前提：Codemagic 控制台 Team > Integrations 添加一个名为 "App Store Connect" 的 API Key 集成
+# （App Store Connect → 用户和访问 → 集成 → App Store Connect API → 生成密钥，角色选 App Manager）
+
+workflows:
+  ios-release:
+    name: Night Window iOS Release
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: App Store Connect
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.lugman.nightwindow
+      node: 22.23.3
+      xcode: latest
+      cocoapods: default
+      vars:
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          npm ci
+
+      - name: Build RevenueCat purchases bundle
+        script: |
+          npm run build:purchases || true
+
+      - name: Capacitor sync (iOS)
+        script: |
+          npx cap sync ios
+
+      - name: Set build number
+        script: |
+          cd ios/App
+          agvtool new-version -all "$(date +%Y%m%d%H%M)" 
+
+      - name: Build IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --archive-flags="-destination 'generic/platform=iOS'" \
+            --ipa-flags="--export-method app-store-connect"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        # 若要直接提交审核，改为：
+        # submit_to_testflight: false
+        # submit_to_app_store: true
