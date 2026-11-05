@@ -38,7 +38,7 @@ workflows:
           security default-keychain -s "$KEYCHAIN"
           security unlock-keychain -p nwpass "$KEYCHAIN"
           security set-keychain-settings -t 3600 -u "$KEYCHAIN"
-          echo "$IOS_P12_BASE64" | openssl base64 -d -A > /tmp/nw.p12
+          printf '%s' "$IOS_P12_BASE64" | tr -d '[:space:]' | openssl base64 -d -A > /tmp/nw.p12
           security import /tmp/nw.p12 -k "$KEYCHAIN" -P "$IOS_P12_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k nwpass "$KEYCHAIN"
           mkdir -p ~/.appstoreconnect/private_keys
