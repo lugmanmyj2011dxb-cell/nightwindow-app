@@ -68,7 +68,7 @@
      ⚠️ Apple 只在"第一次授权"时返回姓名/邮箱，之后只回 identityToken——所以拿到 name 的那次
      要立刻存进 displayName。
 ================================================================= */
-// Firebase 项目「Night Window」（ID: night-window）Web 应用配置，2026-10-16 从控制台取回并填写
+// Firebase 项目「Sleep Window」（ID: night-window）Web 应用配置，2026-10-16 从控制台取回并填写
 const FIREBASE_CONFIG = {
   apiKey: 'AIzaSyCmifuwHvoMcMACmlD3_N5DAaVEVvXqStc',
   authDomain: 'night-window.firebaseapp.com',
