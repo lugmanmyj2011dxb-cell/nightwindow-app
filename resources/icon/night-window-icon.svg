@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- 眠窗 App 图标（矢量源文件）：深青绿底 + 暖金色线稿。
+       所有平台图标都由这个文件渲染出来，不要直接改导出的 png。 -->
+  <defs>
+    <linearGradient id="bg" x1="0.15" y1="0" x2="0.55" y2="1">
+      <stop offset="0" stop-color="#11707C"/>
+      <stop offset="0.55" stop-color="#0C525C"/>
+      <stop offset="1" stop-color="#07343C"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.34" r="0.62">
+      <stop offset="0" stop-color="#1E8B96" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#0A454E" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="moonCut">
+      <rect width="1024" height="1024" fill="#fff"/>
+      <circle cx="518" cy="284" r="70" fill="#000"/>
+    </mask>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#glow)"/>
+
+  <g fill="none" stroke="#E9D7A8" stroke-width="23"
+     stroke-linecap="round" stroke-linejoin="round">
+    <!-- 拱形窗框：左腿落到床沿，右腿略短 -->
+    <path d="M150 700 V 505 A 352 352 0 0 1 854 505 V 664"/>
+    <!-- 头（小圆） -->
+    <circle cx="416" cy="628" r="31"/>
+    <!-- 身体 + 被面，从头的右侧一路向右，末端接折线 -->
+    <path d="M448 636 C 486 662 530 664 568 646
+             C 602 630 616 606 640 598"/>
+    <!-- 被子折角（右侧的小折线） -->
+    <path d="M640 598 L 680 514 L 720 600 L 760 514 L 800 600"/>
+    <!-- 床架 -->
+    <rect x="304" y="702" width="424" height="52" rx="8"/>
+  </g>
+
+  <!-- 月亮 -->
+  <circle cx="468" cy="296" r="82" fill="#E9D7A8" mask="url(#moonCut)"/>
+</svg>

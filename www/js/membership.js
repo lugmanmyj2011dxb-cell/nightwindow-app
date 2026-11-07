@@ -92,7 +92,12 @@ const Membership = (function(){
     // 非场景类内部 id（如 isoToggle）没有 scene_<id> 文案键，要映射到该功能自己的本地化名称键；
     // 声音/场景 id 走 sceneLabel——和声音行渲染（index.html addSoundRow）同一套机制，25 语言都本地化
     const FEATURE_NAME_KEYS = { isoToggle:'isoToggleTitle' };
-    const label = window.I18N
+    // ⚠️ 真实bug修复：i18n.js 里的 I18N 是用 const 声明的顶层绑定，不会挂到 window 上，
+    // 原来写 window.I18N 永远是 undefined，于是这里一直回退到裸 sceneId——
+    // 用户看到的付费墙标题就是「downpour」这种内部 id（截图里已经暴露过）。
+    // 判断"有没有加载到 i18n"必须用 typeof 检测，不能用 window.I18N。
+    const hasI18N = (typeof I18N !== 'undefined' && I18N && typeof I18N.sceneLabel === 'function');
+    const label = hasI18N
       ? (FEATURE_NAME_KEYS[sceneId] ? I18N.t(FEATURE_NAME_KEYS[sceneId]) : I18N.sceneLabel(sceneId))
       : sceneId;
     const nameEl = document.getElementById('paywallSceneName');

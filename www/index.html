@@ -31,13 +31,20 @@
 <script src="js/remote-scenes.js"></script>
 <style>
   :root{
-    --accent-fire:#e1953f;
-    --accent-rain:#7fa2c4;
-    --accent-snow:#cfe0e8;
-    --text-primary:#f2eee2;
-    --text-muted:#b9bcc4;
-    --line:rgba(255,255,255,0.10);
-    --panel-bg:rgba(10,12,17,0.62);
+    /* 2026-11-07 视觉升级：去掉冷白与高饱和亮橙，改成"月光暖灰 + 琥珀微光"。
+       冷白(#fff)和冷灰蓝在深夜会刺激视神经，暖调低饱和才让人放松。
+       旧变量名保留不改，避免牵动几十处引用，只把值换掉。 */
+    --bg-deep:#121316;                        /* 极夜炭黑：比纯黑柔和，减少 OLED 拖影与刺眼 */
+    --surface:#1c1d22;                        /* 毛玻璃卡片底色 */
+    --surface-line:rgba(255,245,230,0.08);    /* 极细微光边框 */
+    --accent-fire:#d4a373;                    /* 暖琥珀/香槟金：替代生硬的亮橙色 */
+    --accent-rain:#7a919e;                    /* 静谧雾蓝：降低饱和度，贴合睡眠主题 */
+    --accent-snow:#ede6dc;                    /* 暖羊皮纸白 */
+    --text-primary:#ede6dc;                   /* 主标题/数值，像昏黄台灯下的纸 */
+    --text-muted:#9e9890;                     /* 副标题/说明，退到视觉二线 */
+    --text-hint:#78736c;                      /* 分类小标题/协议链接 */
+    --line:rgba(255,245,230,0.08);
+    --panel-bg:rgba(28,29,34,0.72);
     /* 钻石💎版专属配色：和场景色（--accent-rain 那种偏灰的浅蓝）刻意区分开，
        用更深、更有宝石感的蓝（主色）配一条很细的铂金描边（辅色），
        冷色宝石+暖色贵金属描边是珠宝品牌常用的"高端感"配色逻辑，
@@ -55,9 +62,11 @@
      背景就会先闪一下，对一个在全黑房间里准备睡觉、刚摘下眼镜的人来说，这一下比白天使用
      刺眼得多。补上和启动页(capacitor.config.json的backgroundColor)同一个深色，让"还没画完
      界面"的这个空档也是深色，不会出现任何一帧白色。 */
-  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#0c0e13;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#121316;}
   body{
-    font-family:'Inter',sans-serif;
+    /* 中文优先用系统的苹方/思源黑，英文回落到 Inter——中英混排时字重视觉更接近，
+       不会出现"中文很硬、英文很细"的割裂感 */
+    font-family:'PingFang SC','Noto Sans SC','Inter',sans-serif;
     color:var(--text-primary);
   }
   canvas#scene{
@@ -95,13 +104,19 @@
     inset:0;
     z-index:3;
     pointer-events:none;
-    background:radial-gradient(120% 100% at 50% 40%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.45) 100%);
+    /* 深夜使用：光靠边缘压暗不够，画面中心的高光（比如火光场景）依然刺眼，
+       叠一层很淡的暖炭黑把整体亮度压下来，任何场景都不会"亮到睁不开眼" */
+    background:linear-gradient(180deg,
+        rgba(18,19,22,0.55) 0%,
+        rgba(18,19,22,0.16) 28%,
+        rgba(18,19,22,0.30) 100%),
+      radial-gradient(120% 100% at 50% 40%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);
   }
   .fire-glow{
     position:fixed;
     left:0; right:0; bottom:0;
     height:42vh;
-    background:radial-gradient(120% 100% at 50% 100%, rgba(225,149,63,0.55), rgba(225,149,63,0) 70%);
+    background:radial-gradient(120% 100% at 50% 100%, rgba(212,163,115,0.45), rgba(212,163,115,0) 70%);
     opacity:0;
     transition:opacity 1s ease;
     pointer-events:none;
@@ -127,17 +142,22 @@
   h1{
     font-family:'Fraunces',serif;
     font-weight:500;
-    font-size:24px;
-    letter-spacing:0.3px;
+    font-size:25px;
+    letter-spacing:1.5px;
     margin:0;
   }
-  h1 .tagline{color:var(--accent-fire);font-style:italic;font-weight:300;}
+  h1 .tagline{color:var(--accent-fire);font-style:italic;font-weight:300;font-size:20px;letter-spacing:0.5px;}
   /* 分区域定位语：zh-CN 可用"帮助改善睡眠质量"等功能描述；zh-TW/en 及回退语言只作放松/陪伴体验描述 */
-  .app-slogan{flex-basis:100%;margin:2px 0 0;font-size:12px;font-weight:300;color:var(--text-muted);letter-spacing:.3px;line-height:1.4;max-width:560px;}
+  .app-slogan{flex-basis:100%;margin:8px 0 0;font-size:13px;font-weight:300;color:var(--text-muted);letter-spacing:.4px;line-height:1.6;max-width:560px;}
+  /* 定时状态 + 分享/语言：包成一条半透明胶囊，不再让文字直接飘在雨雪画面上 */
   .timer-status{
     font-variant-numeric:tabular-nums;
-    font-size:13px;
+    font-size:12px;
     color:var(--text-muted);
+    background:rgba(28,29,34,0.6);
+    border:1px solid var(--surface-line);
+    border-radius:999px;
+    padding:6px 12px;
     display:flex;
     align-items:center;
     gap:10px;
@@ -154,10 +174,11 @@
   .spacer{flex:1 1 auto;min-height:8px;}
 
   .panel{
-    background:linear-gradient(180deg, rgba(16,18,25,0.5), rgba(8,9,13,0.72));
-    backdrop-filter:blur(22px) saturate(1.15);
-    -webkit-backdrop-filter:blur(22px) saturate(1.15);
-    border:1px solid rgba(255,255,255,0.08);
+    /* 毛玻璃：暖炭灰半透明 + 极细微光边框，背景的雨雪/火光会透上来一点，有呼吸感 */
+    background:linear-gradient(180deg, rgba(28,29,34,0.62), rgba(18,19,22,0.82));
+    backdrop-filter:blur(22px) saturate(1.05);
+    -webkit-backdrop-filter:blur(22px) saturate(1.05);
+    border:1px solid var(--surface-line);
     border-radius:22px;
     padding:6px 18px;
     max-height:56vh;
@@ -190,9 +211,10 @@
   }
   .group:last-of-type{border-bottom:none;}
   .group-label{
-    font-size:11.5px;
-    color:var(--text-muted);
-    letter-spacing:0.4px;
+    font-size:11px;
+    color:var(--text-hint);
+    letter-spacing:2px;
+    text-transform:uppercase;
     margin-bottom:10px;
   }
   .recent-chips{display:flex; flex-wrap:wrap; gap:8px;}
@@ -249,6 +271,9 @@
   .featured-info .lock svg{width:100%; height:100%;}
   .paywall-preview{
     width:100%; max-height:150px; object-fit:cover; border-radius:14px; margin-bottom:14px; background:#05070b;
+    /* 图片底部淡出到弹窗底色，避免"一张照片硬切一条横线"，视觉上更像画面融进夜色 */
+    -webkit-mask-image:linear-gradient(to bottom, #000 62%, rgba(0,0,0,0.35) 88%, transparent 100%);
+    mask-image:linear-gradient(to bottom, #000 62%, rgba(0,0,0,0.35) 88%, transparent 100%);
   }
   .streak-banner{
     position:fixed; left:16px; right:16px; bottom:16px; z-index:50;
@@ -275,45 +300,52 @@
     color:var(--text-primary); background:rgba(255,255,255,0.08); border:1px solid var(--line);
   }
   .greet-text{
-    text-align:center; font-size:13.5px; color:var(--text-muted); line-height:1.5;
+    text-align:center; font-size:13px; color:var(--text-muted); line-height:1.6;
     margin:0 auto 14px; max-width:280px; opacity:0; transition:opacity 1.2s ease;
   }
   .greet-text.show{opacity:1;}
   .sound-row{
     display:grid;
-    grid-template-columns:70px 1fr 32px;
+    grid-template-columns:74px 1fr 34px;
     align-items:center;
     gap:14px;
-    padding:6px 0;
+    /* 整行高度约 50px：手指盲操更准，也不再一行挨一行地压着 */
+    padding:8px 0;
   }
   .sound-row .name{
-    font-size:13.5px;
+    font-size:15px;
     color:var(--text-primary);
     cursor:pointer;
     user-select:none;
   }
   .sound-row .name.off{color:var(--text-muted);}
   .sound-row .pct{
-    font-size:11.5px;
+    font-size:13px;
     color:var(--text-muted);
     text-align:right;
-    font-variant-numeric:tabular-nums;
+    font-variant-numeric:tabular-nums; /* 等宽数字，拖滑块时数字不会左右跳 */
   }
   input[type=range]{
     -webkit-appearance:none;appearance:none;
-    width:100%;height:4px;border-radius:2px;
-    background:rgba(255,255,255,0.18);outline:none;
+    width:100%;height:2px;border-radius:2px;
+    /* 已激活部分用暖琥珀，未激活部分是极细的暖灰线（--fill 由 paintRangeFill 实时写入） */
+    background:linear-gradient(to right,
+      var(--accent-fire) 0 var(--fill,0%),
+      rgba(255,245,230,0.12) var(--fill,0%) 100%);
+    outline:none;
     /* 竖向手势交给页面滚动，只在横向拖动时才改滑块值——不然在声音列表上竖滑时手指蹭到滑块会误改音量 */
     touch-action:pan-y;
   }
   input[type=range]::-webkit-slider-thumb{
     -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
-    background:var(--thumb,#b9bcc4);cursor:pointer;
-    box-shadow:0 0 0 4px rgba(255,255,255,0.06);
+    background:var(--text-primary);cursor:pointer;
+    /* 一圈极淡的外发光，像一颗微弱的夜明珠，不是一块生硬的白点 */
+    box-shadow:0 0 8px rgba(237,230,220,0.45),0 0 0 1px rgba(18,19,22,0.6);
   }
   input[type=range]::-moz-range-thumb{
     width:14px;height:14px;border-radius:50%;border:none;
-    background:var(--thumb,#b9bcc4);cursor:pointer;
+    background:var(--text-primary);cursor:pointer;
+    box-shadow:0 0 8px rgba(237,230,220,0.45);
   }
   .group.rain input[type=range]{--thumb:var(--accent-rain);}
   .group.snow input[type=range]{--thumb:var(--accent-snow);}
@@ -522,8 +554,10 @@
   .plan-option.recommended{border-color:var(--accent-fire);background:rgba(194,112,58,0.08);}
   .plan-option.disabled{pointer-events:none;opacity:0.55;cursor:default;} /* 购买进行中：禁止再点，顺手给个视觉反馈，不然像是"点了没反应" */
   .plan-option .badge{
-    position:absolute;top:-9px;left:14px;background:var(--accent-fire);color:#1a1408;
+    /* 低饱和香槟金底 + 炭黑字：高饱和亮橙在暗色里太吵，和"助眠"的调性反着来 */
+    position:absolute;top:-9px;left:14px;background:var(--accent-fire);color:#121316;
     font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;
+    letter-spacing:0.2px;
   }
   .plan-option .plan-name{font-size:13.5px;color:var(--text-primary);font-weight:500;}
   .plan-option .plan-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
@@ -567,11 +601,12 @@
     0%{left:-60%;} 45%{left:120%;} 100%{left:120%;}
   }
   .plan-option[data-plan="diamond"] .badge{
-    /* 同上一条注释：#e8c87a 是写死的亮金色，配深紫水晶/黑曜这几个主题的描边色会很不协调
-       （比如紫水晶的描边是银色，接一个金色高光，一眼就能看出"没对上"）。改成用
-       var(--diamond-3)——每套主题都定义了一个"近白高光"，天然跟该主题的描边色搭配过。 */
+    /* ⚠️ 真实bug修复：钻石卡为了裁住扫光加了 overflow:hidden，而标签是 top:-9px 挂在卡片外的，
+       结果标签上半截被裁掉（用户截图里能直接看到）。钻石卡是纵向布局，改成静态定位放进卡片内部，
+       既不会被裁，也更像"卡片自己的徽章"而不是贴在边上的浮标。 */
+    position:static;display:inline-block;align-self:flex-start;margin-bottom:2px;
     background:linear-gradient(135deg, var(--diamond-edge), var(--diamond-3));
-    color:#1a1408;
+    color:#121316;
   }
   .plan-option[data-plan="diamond"] .plan-name{color:var(--diamond-3);font-weight:600;letter-spacing:0.3px;}
   .plan-option[data-plan="diamond"] .plan-price{color:var(--diamond-3);}
@@ -611,7 +646,7 @@
      而且和「恢复购买」按钮挨得太紧，被按钮压住一半，看起来像点不到。这里统一给足对比度和间距。 */
   .paywall-terms-row{display:flex;justify-content:center;gap:18px;margin:14px 0 16px;}
   .paywall-terms-link{
-    font-size:12.5px;color:var(--text-muted);text-decoration:underline;
+    font-size:12px;color:var(--text-hint);text-decoration:underline;
     text-underline-offset:2px;padding:4px 2px;line-height:1.6;
   }
   .paywall-terms-link:hover,.paywall-terms-link:active{color:var(--text-primary);}
@@ -1986,6 +2021,20 @@ window.SceneFreshness = {
   isRecentlyAdded: isRecentlyAddedScene
 };
 
+// 滑块的"已激活"部分要显示成琥珀色，但原生 range 没法只靠 CSS 知道当前值，
+// 这里把当前比例写进 --fill 变量，CSS 再按这个比例画渐变（见上面 input[type=range] 的样式）。
+function paintRangeFill(el){
+  if(!el || el.type!=='range') return;
+  const min=+el.min||0, max=+el.max||100, v=+el.value||0;
+  const p=Math.min(100,Math.max(0,((v-min)/((max-min)||1))*100));
+  el.style.setProperty('--fill', p+'%');
+}
+window.paintRangeFill = paintRangeFill;
+// 所有滑块共用同一个委托监听，不需要在每一行里各写一遍
+document.addEventListener('input', e=>{
+  if(e.target && e.target.type==='range') paintRangeFill(e.target);
+}, true);
+
 function addSoundRow(def){
   // ⚠️ 真实安全漏洞修复（互查时发现，严重）：这个函数以前用 innerHTML 模板字符串拼接
   // def.id 和 I18N.sceneLabel(def.id)——这两个值本地内置场景调用时是安全的（写死在代码里），
@@ -2025,6 +2074,7 @@ function addSoundRow(def){
   input.type='range'; input.min='0'; input.max='100';
   input.value=String(def.default||0);
   input.dataset.id = def.id;
+  paintRangeFill(input);
 
   const pctDiv=document.createElement('div');
   pctDiv.className='pct';

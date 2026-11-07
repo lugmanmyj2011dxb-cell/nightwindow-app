@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#FFFFFF</color>
+    <!-- 与 App 图标同色：极深青绿，图标线稿是暖金色 -->
+    <color name="ic_launcher_background">#0C525C</color>
 </resources>
