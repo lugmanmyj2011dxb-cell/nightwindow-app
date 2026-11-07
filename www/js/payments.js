@@ -269,7 +269,21 @@ const Payments = (function(){
           // 退路：后台还没配置 Offerings/Packages 时，直接按 productId 购买，效果一样能解锁，
           // 只是以后想做"同一商品不同呈现方式做实验"会比较麻烦。等你在 RevenueCat 后台把
           // Offerings 配好之后，这条分支基本不会再走到。
-          result = await Purchases.purchaseStoreProduct({ product: { identifier: productId } });
+          //
+          // ⚠️ 2026-11-07 修复（安卓端购买必失败的真实 bug）：这里以前直接传
+          // { identifier: productId }，Google Play 分支会报
+          // "Missing productCategory parameter in {"identifier":"nightwindow_yearly"}" 并中断购买；
+          // iOS 的 StoreKit 分支不校验这个字段，所以问题只在安卓暴露。
+          // 正确做法是先用 getProducts 从商店拿到完整的 StoreProduct（含 productCategory、
+          // 价格、标题等 SDK 内部需要的字段），再把整个对象传进 purchaseStoreProduct。
+          const { products } = await Purchases.getProducts({ productIds: [productId] });
+          const storeProduct = (products || []).find(
+            p => p && normalizeProductId(p.identifier) === productId
+          ) || (products || [])[0];
+          if(!storeProduct){
+            throw new Error('商店里找不到商品 ' + productId + '，请确认它已在后台创建并处于生效状态');
+          }
+          result = await Purchases.purchaseStoreProduct({ product: storeProduct });
         }
         customerInfo = result.customerInfo;
       }catch(err){
