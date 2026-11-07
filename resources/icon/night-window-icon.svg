@@ -1,6 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
   <!-- 眠窗 App 图标（矢量源文件）：深青绿底 + 暖金色线稿。
-       所有平台图标都由这个文件渲染出来，不要直接改导出的 png。 -->
+       所有平台图标都由这个文件渲染出来（scripts/render_icons.js），不要直接改导出的 png。
+       2026-11-07 v4：右侧折线改为连笔艺术化的 "nw"（Night Window 首字母）——
+       关键区别是 "w" 必须从上往下起笔（谷朝下），原来从下往上起笔所以读起来像 M；
+       床下加 NIGHT WINDOW 字标，让 logo 在商店列表里一眼可认。 -->
   <defs>
     <linearGradient id="bg" x1="0.15" y1="0" x2="0.55" y2="1">
       <stop offset="0" stop-color="#11707C"/>
@@ -26,15 +29,25 @@
     <path d="M150 700 V 505 A 352 352 0 0 1 854 505 V 664"/>
     <!-- 头（小圆） -->
     <circle cx="416" cy="628" r="31"/>
-    <!-- 身体 + 被面，从头的右侧一路向右，末端接折线 -->
-    <path d="M448 636 C 486 662 530 664 568 646
-             C 602 630 616 606 640 598"/>
-    <!-- 被子折角（右侧的小折线） -->
-    <path d="M640 598 L 680 514 L 720 600 L 760 514 L 800 600"/>
+    <!-- 身体 → 连笔 "nw"：一条线从头边出发，先沉（被子的起伏），再拔起收锋（n 的肩），
+         然后从高处俯冲-回升-俯冲-升起（w 的两个谷），末端向拱腿方向扬起 -->
+    <path d="M448 636
+             C 495 668 552 664 592 628
+             C 620 605 638 565 650 512
+             C 656 500 668 496 678 506
+             C 690 545 700 575 712 596
+             C 724 575 736 540 744 512
+             C 752 540 762 575 774 596
+             C 786 575 800 535 812 505"/>
     <!-- 床架 -->
     <rect x="304" y="702" width="424" height="52" rx="8"/>
   </g>
 
   <!-- 月亮 -->
   <circle cx="468" cy="296" r="82" fill="#E9D7A8" mask="url(#moonCut)"/>
+
+  <!-- 字标：床正下方。斜体衬线与 App 内 h1（Fraunces italic）同一气质 -->
+  <text x="512" y="852" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-style="italic"
+        font-size="56" letter-spacing="10" fill="#E9D7A8" opacity="0.92">NIGHT WINDOW</text>
 </svg>

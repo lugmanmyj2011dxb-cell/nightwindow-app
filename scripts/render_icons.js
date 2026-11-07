@@ -16,6 +16,8 @@ const fgSvg = svg
 const TARGETS = [
   // iOS：App Store 要求 1024 满版，圆角由系统裁
   { out: 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', size: 1024 },
+  // 应用商店商品页图标（Play 要求 512×512 无透明通道）
+  { out: 'resources/icon/export/icon-512.png', size: 512 },
   // Android 传统图标（带圆角）
   ...[['mdpi', 48], ['hdpi', 72], ['xhdpi', 96], ['xxhdpi', 144], ['xxxhdpi', 192]].flatMap(([d, s]) => [
     { out: `android/app/src/main/res/mipmap-${d}/ic_launcher.png`, size: s, radius: '22%' },
