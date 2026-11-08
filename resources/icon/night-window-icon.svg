@@ -1,56 +1,59 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <!-- 眠窗 App 图标（矢量源文件）：深青绿底 + 暖金色线稿。
+  <!-- 眠窗 App 图标（矢量源文件）：海洋蓝底 + 暖金，仅此两色。
        所有平台图标都由这个文件渲染出来（scripts/render_icons.js），不要直接改导出的 png。
-       2026-11-07 v4：右侧折线改为连笔艺术化的 "nw"（Night Window 首字母）——
-       关键区别是 "w" 必须从上往下起笔（谷朝下），原来从下往上起笔所以读起来像 M；
-       床下加 NIGHT WINDOW 字标，让 logo 在商店列表里一眼可认。 -->
+       v15：严格按用户红圈拼合，只保留四样东西——
+         ① 图1红圈：拱窗 + 月牙
+         ② 图1红圈：底部 NIGHT WINDOW 字标
+         ③ 图2红圈：大花体 N（左竖拔起 → 顶部绕圈 → 斜划落下 → 右侧收锋）
+         ④ 图3红圈：蜷缩睡人（闭眼 + 膝盖收向胸口）
+       睡人做成实心剪影（图3本来就是剪影，细线条读不出人形）：头为实心圆、
+       眼睛用 mask 挖空成月牙缝、身体用粗描边形成实心卷曲的躯干。 -->
   <defs>
     <linearGradient id="bg" x1="0.15" y1="0" x2="0.55" y2="1">
       <stop offset="0" stop-color="#11707C"/>
       <stop offset="0.55" stop-color="#0C525C"/>
       <stop offset="1" stop-color="#07343C"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.34" r="0.62">
-      <stop offset="0" stop-color="#1E8B96" stop-opacity="0.55"/>
-      <stop offset="1" stop-color="#0A454E" stop-opacity="0"/>
-    </radialGradient>
     <mask id="moonCut">
       <rect width="1024" height="1024" fill="#fff"/>
-      <circle cx="518" cy="284" r="70" fill="#000"/>
+      <circle cx="456" cy="374" r="58" fill="#000"/>
+    </mask>
+    <mask id="eyeCut">
+      <rect width="1024" height="1024" fill="#fff"/>
+      <path d="M302 506 Q 320 524 340 508" fill="none" stroke="#000"
+            stroke-width="10" stroke-linecap="round"/>
     </mask>
   </defs>
 
   <rect width="1024" height="1024" fill="url(#bg)"/>
-  <rect width="1024" height="1024" fill="url(#glow)"/>
 
-  <g fill="none" stroke="#E9D7A8" stroke-width="23"
+  <g fill="none" stroke="#E9D7A8" stroke-width="22"
      stroke-linecap="round" stroke-linejoin="round">
-    <!-- 拱形窗框：左腿落到床沿，右腿略短 -->
-    <path d="M150 700 V 505 A 352 352 0 0 1 854 505 V 664"/>
-    <!-- 头（小圆） -->
-    <circle cx="416" cy="628" r="31"/>
-    <!-- 身体 → 连笔 "nw"：
-         v5 修正——v4 里身体直接以 120px 大仰角冲进字母，读出来像"腿翘起来/撅屁股"。
-         现在身体全程保持低平（毯子高度 y≈636~664），"nw" 有自己的竖直字干从上方落下，
-         与毯尾之间只用一段 30px 高的小弧线轻轻相接——是"毯尾卷起成字母"，不是腿。 -->
-    <path d="M448 636
-             C 500 662 556 658 606 642
-             C 622 646 640 630 648 612
-             L 648 508
-             C 648 500 668 494 678 506
-             C 690 545 700 575 712 596
-             C 724 575 736 540 744 512
-             C 752 540 762 575 774 596
-             C 786 575 800 535 812 505"/>
-    <!-- 床架 -->
-    <rect x="304" y="702" width="424" height="52" rx="8"/>
+    <!-- ① 拱窗（两腿落地） -->
+    <path d="M190 704 V 556 A 322 322 0 0 1 834 556 V 704"/>
+
+    <!-- ③ 大花体 N（加宽到窗内宽度，顶部绕圈加大） -->
+    <path d="M596 700
+             C 610 596 630 466 656 394
+             C 670 350 730 340 750 380
+             C 764 412 742 448 706 438
+             C 724 500 780 612 812 700
+             C 820 678 824 650 826 624"/>
+
+    <!-- ④ 躯干：粗描边实心剪影，背 → 臀 → 膝盖向前收（胎儿式蜷睡） -->
+    <path d="M352 548 C 418 556 464 596 476 646" stroke-width="62"/>
+    <path d="M476 646 C 480 682 452 702 412 700 C 392 699 380 688 382 674"
+          stroke-width="52"/>
   </g>
 
-  <!-- 月亮 -->
-  <circle cx="468" cy="296" r="82" fill="#E9D7A8" mask="url(#moonCut)"/>
+  <!-- ④ 头（实心，闭眼用 mask 挖空） -->
+  <circle cx="316" cy="516" r="46" fill="#E9D7A8" mask="url(#eyeCut)"/>
 
-  <!-- 字标：床正下方。斜体衬线与 App 内 h1（Fraunces italic）同一气质 -->
-  <text x="512" y="852" text-anchor="middle"
+  <!-- ① 月亮（实心月牙） -->
+  <circle cx="410" cy="390" r="70" fill="#E9D7A8" mask="url(#moonCut)"/>
+
+  <!-- ② 字标 -->
+  <text x="512" y="884" text-anchor="middle"
         font-family="Georgia, 'Times New Roman', serif" font-style="italic"
-        font-size="56" letter-spacing="10" fill="#E9D7A8" opacity="0.92">NIGHT WINDOW</text>
+        font-size="54" letter-spacing="10" fill="#E9D7A8" opacity="0.92">NIGHT WINDOW</text>
 </svg>
