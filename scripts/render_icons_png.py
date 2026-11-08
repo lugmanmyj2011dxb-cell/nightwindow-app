@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""从 AI 生成的位图母版 resources/icon/gen-v1-blue.png 生成 iOS / Android 全套图标。
+"""从 AI 生成的位图母版 resources/icon/master.png 生成 iOS / Android 全套图标。
 用法：python3 scripts/render_icons_png.py
 
 母版为 1024×1024（海洋蓝底 #11707C→#07343C + 暖金线稿）。
@@ -10,7 +10,7 @@ import os
 from PIL import Image, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, 'resources/icon/gen-v1-blue.png')
+SRC = os.path.join(ROOT, 'resources/icon/master.png')
 master = Image.open(SRC).convert('RGB')
 
 def rounded(img, radius_pct):
