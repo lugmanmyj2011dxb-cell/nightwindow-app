@@ -150,12 +150,13 @@ function renderPlanList(){
     ? `<div class="trial-note" id="planLifetimeUpgradeNote">${I18N.t('lifetimeUpgradeNote').replace('{price}', sym+lifetimeCfg[cur])}</div>`
     : '';
   el.innerHTML = `
-    <div class="plan-option" data-plan="yearly" data-product="${PRICING.yearly.productId}">
+    <div class="plan-option recommended" data-plan="yearly" data-product="${PRICING.yearly.productId}">
       <div class="plan-option-row">
         <div>
           <div class="badge" data-i18n="planRecommended">推荐 · 更划算</div>
           <div class="plan-name" data-i18n="planYearly">年付</div>
           <div class="plan-sub">${sym}${(cur==='cny'? (PRICING.yearly.cny/12).toFixed(1) : PRICING.yearly.monthlyEquivUsd)}<span data-i18n="perMonthShort">/月</span></div>
+          <div class="plan-sub plan-anchor">${sym}${(cur==='cny'? (PRICING.yearly.cny/365).toFixed(1) : (PRICING.yearly.usd/365).toFixed(2))}<span data-i18n="perDayShort">/天</span> · ${I18N.t('yearlySaveAnchor').replace('{pct}','53')}</div>
         </div>
         <div class="plan-price">${sym}${PRICING.yearly[cur]}<small data-i18n="perYearShort">/年</small></div>
       </div>
@@ -175,6 +176,8 @@ function renderPlanList(){
       </div>
       ${lifetimeNoteHtml}
     </div>
+    <a href="#" class="diamond-expand-toggle" data-i18n="diamondExpandToggle">查看全部权益 ▾</a>
+    <div class="diamond-expand-body" style="display:none">
     <div class="plan-option diamond-tier" data-plan="diamond" data-product="${PRICING.diamond.productId}">
       <div class="plan-option-row">
         <div>
@@ -196,7 +199,20 @@ function renderPlanList(){
       <a href="#" class="diamond-detail-toggle" data-i18n="diamondDetailToggle">查看全部钻石权益 ▾</a>
       <ul class="diamond-detail-list" style="display:none"></ul>
     </div>
+    </div>
   `;
+  // 钻石档默认折叠在"查看全部权益"后面（付费墙只保留年付/月付/终身三档在明面上），
+  // 点开才显示，不默认占位；展开/收起不影响里面已有的购买与权益列表逻辑
+  const expandToggle = el.querySelector('.diamond-expand-toggle');
+  const expandBody = el.querySelector('.diamond-expand-body');
+  if(expandToggle && expandBody){
+    expandToggle.addEventListener('click', (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      const opening = expandBody.style.display === 'none';
+      expandBody.style.display = opening ? 'block' : 'none';
+      expandToggle.textContent = I18N.t(opening ? 'diamondExpandToggleOpen' : 'diamondExpandToggle');
+    });
+  }
   // 展开/收起完整权益列表——必须 stopPropagation，不然点这个链接会被当成"点了钻石选项"直接触发购买
   const toggleEl = el.querySelector('.diamond-detail-toggle');
   const listEl = el.querySelector('.diamond-detail-list');

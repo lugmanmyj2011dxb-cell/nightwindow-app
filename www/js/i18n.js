@@ -227,7 +227,17 @@ const I18N = (function(){
       scene_traffic:'车行夜雨', scene_splash:'水花', scene_groundRain:'落地雨',
       scene_snowyAvenue:'雪夜林荫道', scene_snowyOldTown:'雪夜广场',
       scene_snowWindowGlow:'雪窗微光', scene_snowReflection:'雪夜倒影',
-      scene_quietSnowfall:'静雪', scene_windyNight:'风声夜', scene_calm:'安眠夜'
+      scene_quietSnowfall:'静雪', scene_windyNight:'风声夜', scene_calm:'安眠夜',
+      tabScenes:'场景', tabMix:'混音', tabTimer:'定时', tabMe:'我的',
+      mixNowPlayingLabel:'正在播放 · NOW PLAYING',
+      mixEmptyHint:'还没有正在响的声音，点「添加声音」挑一个',
+      addSoundBtn:'＋ 添加声音', addSoundBtnOpen:'收起声音列表',
+      timerGroupLabel:'定时关闭 · TIMER', timerOff:'关闭',
+      timerOpt15m:'15分钟', timerOpt90m:'90分钟',
+      meMembership:'会员与订阅', mePrefsLabel:'偏好开关 · PREFERENCES',
+      scenePreviewHint:'会员画面试看 15 秒', scenePreviewUnlock:'立即解锁',
+      perDayShort:'/天', yearlySaveAnchor:'比按月付省 {pct}%',
+      diamondExpandToggle:'查看全部权益 ▾', diamondExpandToggleOpen:'收起权益 ▴'
     },
 
     'zh-TW': {
@@ -629,7 +639,17 @@ const I18N = (function(){
       scene_traffic:'Night Traffic Rain', scene_splash:'Water Splash', scene_groundRain:'Ground Rain',
       scene_snowyAvenue:'Snowy Avenue', scene_snowyOldTown:'Snowy Old Town',
       scene_snowWindowGlow:'Window Glow in Snow', scene_snowReflection:'Snow Reflection',
-      scene_quietSnowfall:'Quiet Snowfall', scene_windyNight:'Windy Night', scene_calm:'Calm Night'
+      scene_quietSnowfall:'Quiet Snowfall', scene_windyNight:'Windy Night', scene_calm:'Calm Night',
+      tabScenes:'Scenes', tabMix:'Mix', tabTimer:'Timer', tabMe:'Me',
+      mixNowPlayingLabel:'NOW PLAYING',
+      mixEmptyHint:'Nothing playing yet — tap "Add sound" to pick one',
+      addSoundBtn:'+ Add sound', addSoundBtnOpen:'Hide sound list',
+      timerGroupLabel:'SLEEP TIMER', timerOff:'Off',
+      timerOpt15m:'15 min', timerOpt90m:'90 min',
+      meMembership:'Membership & subscription', mePrefsLabel:'PREFERENCES',
+      scenePreviewHint:'Member scene preview · 15s', scenePreviewUnlock:'Unlock now',
+      perDayShort:'/day', yearlySaveAnchor:'Save {pct}% vs monthly',
+      diamondExpandToggle:'View all perks ▾', diamondExpandToggleOpen:'Hide perks ▴'
     },
 
     'ja': {

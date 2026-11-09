@@ -129,7 +129,7 @@
     height:100vh;
     display:flex;
     flex-direction:column;
-    padding:22px 20px calc(18px + env(safe-area-inset-bottom));
+    padding:22px 20px calc(76px + env(safe-area-inset-bottom)); /* 底部留给固定 tabbar */
   }
   header{
     display:flex;
@@ -737,6 +737,115 @@
   .breathing-circle.phase-exhale{transform:scale(0.82);}
   .breathing-phase-text{margin-top:16px;font-size:14px;color:var(--text-secondary);letter-spacing:0.5px;}
   .breathing-timer-echo{font-size:11.5px;color:var(--text-muted);text-align:center;margin:-4px 0 12px;}
+
+  /* ===================== 底部抽屉式导航 + 四视图（2026-11 重构） ===================== */
+  /* 底部固定 4 入口导航：沿用毛玻璃 + 暖金点缀，和低对比夜间主题保持一致 */
+  .tabbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:45;
+    display:flex;align-items:stretch;justify-content:space-around;
+    height:calc(62px + env(safe-area-inset-bottom));
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, rgba(28,29,34,0.72), rgba(16,17,20,0.92));
+    backdrop-filter:blur(22px) saturate(1.05);
+    -webkit-backdrop-filter:blur(22px) saturate(1.05);
+    border-top:1px solid var(--surface-line);
+  }
+  .tab-btn{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;
+    color:var(--text-muted);font-size:10.5px;letter-spacing:0.4px;
+    border-radius:12px;transition:color .2s;
+  }
+  .tab-btn svg{width:21px;height:21px;}
+  .tab-btn.active{color:var(--accent-fire);}
+  .tab-btn:active{background:rgba(255,255,255,0.04);}
+  /* 播放 FAB：沿用原 .play-btn 的呼吸动画与配色，只是改成浮在导航上方的圆形按钮 */
+  .fab-stack{
+    position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:46;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+  }
+  .play-fab{
+    width:58px;height:58px;
+    background:rgba(28,29,34,0.78);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--surface-line);
+    box-shadow:0 10px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
+  }
+  .play-fab svg{width:22px;height:22px;}
+  /* 视图切换：只切显隐，滚动还是交给 .panel 自己的 overflow-y */
+  .tab-view{display:block;}
+  /* ---- 场景页：6 组横滑大卡 ---- */
+  .scene-group{padding:12px 0 2px;}
+  .scene-cards{
+    display:flex;gap:10px;overflow-x:auto;padding:2px 2px 10px;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  }
+  .scene-cards::-webkit-scrollbar{display:none;}
+  .scene-card{
+    flex:0 0 150px;width:150px;height:96px;border-radius:16px;position:relative;cursor:pointer;
+    border:1px solid var(--surface-line);
+    background:linear-gradient(150deg, rgba(255,255,255,0.055), rgba(255,255,255,0.015));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);
+    transition:border-color .2s, background .2s;
+  }
+  .scene-card .scene-card-name{
+    position:absolute;left:12px;bottom:10px;right:36px;
+    font-size:13px;color:var(--text-primary);font-weight:500;letter-spacing:0.3px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .scene-card .scene-card-lock{
+    position:absolute;top:9px;right:10px;width:13px;height:13px;color:var(--accent-fire);opacity:0.85;
+  }
+  .scene-card .scene-card-lock svg{width:100%;height:100%;}
+  .scene-card.active{
+    border-color:var(--accent-fire);
+    background:linear-gradient(150deg, rgba(212,163,115,0.14), rgba(212,163,115,0.05));
+  }
+  .scene-card.active::after{
+    content:'';position:absolute;top:10px;left:10px;width:6px;height:6px;border-radius:50%;
+    background:var(--accent-fire);opacity:0.9;
+  }
+  /* ---- 混音页 ---- */
+  .mix-empty{font-size:12px;color:var(--text-muted);padding:6px 0 14px;line-height:1.6;}
+  .add-sound-btn{
+    display:block;width:100%;margin:2px 0 6px;padding:11px 0;
+    background:rgba(212,163,115,0.08);border:1px dashed rgba(212,163,115,0.4);
+    color:var(--accent-fire);border-radius:14px;font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;
+  }
+  .add-sound-btn:active{background:rgba(212,163,115,0.16);}
+  /* ---- 我的页 ---- */
+  .me-list{padding:2px 0;}
+  .me-row{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:13px 2px;border-bottom:1px solid var(--line);
+    color:var(--text-primary);font-size:14px;cursor:pointer;text-decoration:none;
+  }
+  .me-row:last-child{border-bottom:none;}
+  .me-row .me-row-label{font-size:14px;color:var(--text-primary);}
+  .me-row .me-row-right{display:inline-flex;align-items:center;gap:8px;color:var(--text-hint);}
+  .me-row .chev{font-size:16px;line-height:1;}
+  .me-row .member-badge{min-height:auto;padding:4px 10px;font-size:11px;}
+  /* ---- 会员场景 15 秒试看：顶部小胶囊（立即解锁入口） ---- */
+  .scene-preview-pill{
+    position:fixed;top:calc(112px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);
+    z-index:55;display:flex;align-items:center;gap:10px;
+    background:rgba(20,22,28,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--surface-line);border-radius:999px;padding:7px 8px 7px 14px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.45);
+    font-size:12px;color:var(--text-secondary);white-space:nowrap;
+  }
+  .scene-preview-pill button{
+    background:var(--accent-fire);border:none;color:#1a1408;font-weight:600;
+    border-radius:999px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;
+  }
+  /* ---- 付费墙：钻石档折叠 ---- */
+  .diamond-expand-toggle{
+    display:block;text-align:center;font-size:12px;color:var(--text-muted);
+    padding:10px 0 2px;text-decoration:none;font-family:'Inter',sans-serif;
+  }
+  .diamond-expand-toggle:hover{color:var(--accent-fire);}
+  /* 年付卡里的"每天价 · 省53%"价值锚点：比 plan-sub 更弱一档，不抢主价格 */
+  .plan-option .plan-anchor{color:rgba(212,163,115,0.75);font-size:10.5px;margin-top:3px;}
 </style>
 </head>
 <body>
@@ -794,21 +903,6 @@
 <div class="layout">
   <header>
     <h1><span data-i18n="appName">眠窗</span> <span class="tagline" data-i18n="appTagline">Night Window</span></h1>
-    <p class="app-slogan" data-i18n="appSlogan">White noise for relaxation and a calm bedtime routine</p>
-    <div class="header-tools">
-      <span class="member-badge" id="memberBadge" data-i18n="memberBadge" style="cursor:pointer">会员</span>
-      <!-- 防误触锁定按钮：只在播放中出现（见 TouchLock 模块），睡前场景下被子和翻身的误触
-           是这个品类的高频打断源，比任何"音质优化"都更影响信任。 -->
-      <button class="icon-btn" id="touchLockBtn" data-i18n-aria="lockBtnTitle" aria-label="锁定屏幕防误触" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-      </button>
-      <button class="icon-btn" id="shareBtn" data-i18n-aria="shareBtnTitle" aria-label="分享眠窗">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.4"/><circle cx="17" cy="6" r="2.4"/><circle cx="17" cy="18" r="2.4"/><path d="M8.2 10.8l6.8-3.8M8.2 13.2l6.8 3.8"/></svg>
-      </button>
-      <button class="icon-btn" id="langBtn" aria-label="Language">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15.5 0 18M12 3c-2.5 2.5-2.5 15.5 0 18"/></svg>
-      </button>
-    </div>
     <div class="timer-status">
       <span id="timerLabel" data-i18n="timerNotSet">未设置定时 · 将持续播放</span>
       <button id="cancelTimerBtn" data-i18n="cancelTimer">取消定时</button>
@@ -819,186 +913,255 @@
   <div class="spacer"></div>
 
   <div class="panel">
-    <!-- 睡眠日志摘要：只显示"连续陪伴X晚 · 本周共X小时"这一行简单摘要，不是详细的每夜记录页——
-         详细数据（每夜时长、用的什么组合）确实记录在 SleepLog 模块里，但按用户要求的范围，
-         界面上只需要呈现这一句简单摘要。完全没数据前（新用户）整行隐藏，不占视觉空间。 -->
-    <div class="sleep-log-line" id="sleepLogLine" style="display:none"></div>
-    <div class="group recent" id="recentGroup" style="display:none">
-      <div class="group-label" data-i18n="groupRecent">最近播放 · RECENT</div>
-      <div id="recentRows"></div>
+    <!-- ========== 视图一：场景（默认） ========== -->
+    <div class="tab-view" id="view-scenes">
+      <div class="greet-text" id="greetText" style="display:none"></div>
+      <div class="group recent" id="recentGroup" style="display:none">
+        <div class="group-label" data-i18n="groupRecent">最近播放 · RECENT</div>
+        <div id="recentRows"></div>
+      </div>
+      <!-- 6 组横滑大卡由 SceneCardsUI 按 SOUND_DEFS 生成 -->
+      <div id="sceneCardsRoot"></div>
+      <div class="group featured" id="featuredGroup" style="display:none">
+        <div class="group-label" data-i18n="featuredLabel">为你精选 · 会员专享</div>
+        <div class="featured-row" id="featuredRow"></div>
+      </div>
+      <div class="hint" data-i18n="hint">画面会跟随当前音量最高的声音自动切换场景 · 声音均为实时合成，无需下载素材</div>
     </div>
-    <div class="group mymix" id="myMixGroup">
-      <div class="group-label-row">
-        <div class="group-label" data-i18n="groupMyMix">我的组合 · MY MIX</div>
-        <div class="save-mix-btn" id="saveMixBtn" data-i18n-aria="myMixSaveBtnTitle" aria-label="保存当前组合">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+
+    <!-- ========== 视图二：混音（只列正在响的声音 + 二级"添加声音"） ========== -->
+    <div class="tab-view" id="view-mix" style="display:none">
+      <div class="group-label" data-i18n="mixNowPlayingLabel" style="padding-top:14px">正在播放 · NOW PLAYING</div>
+      <!-- 正在响的声音滑杆行会被移动到这里（不销毁，音量归 0 时移回原来的 group 容器） -->
+      <div id="mixActiveRows"></div>
+      <div class="mix-empty" id="mixEmptyHint" data-i18n="mixEmptyHint">还没有正在响的声音，点「添加声音」挑一个</div>
+      <button class="add-sound-btn" id="addSoundBtn" data-i18n="addSoundBtn">＋ 添加声音</button>
+      <!-- 第二层：全量声音分组（沿用原有 group 容器，行的事件绑定全部保留） -->
+      <div id="addSoundPanel" style="display:none">
+        <div class="group rain">
+          <div class="group-label" data-i18n="groupRain">雨 · RAIN</div>
+          <div id="rainRows"></div>
+        </div>
+        <div class="group snow">
+          <div class="group-label" data-i18n="groupSnow">雪 · SNOW</div>
+          <div id="snowRows"></div>
+        </div>
+        <div class="group cabin">
+          <div class="group-label" data-i18n="groupCabin">木屋 · CABIN</div>
+          <div id="cabinRows"></div>
+        </div>
+        <div class="group more">
+          <div class="group-label" data-i18n="groupMore">更多质感 · EXTRA</div>
+          <div id="moreRows"></div>
+        </div>
+        <div class="group moresnow">
+          <div class="group-label" data-i18n="groupMoreSnow">雪夜市井 · CITY SNOW</div>
+          <div id="moreSnowRows"></div>
+        </div>
+        <div class="group travel">
+          <div class="group-label" data-i18n="groupTravel">旅途 · TRAVEL</div>
+          <div id="travelRows"></div>
+        </div>
+        <div class="group starry">
+          <div class="group-label" data-i18n="groupStarry">星空 · NIGHT SKY</div>
+          <div id="starryRows"></div>
+        </div>
+        <div class="group glimmer">
+          <div class="group-label" data-i18n="groupGlimmer">微光 · GLIMMER</div>
+          <div id="glimmerRows"></div>
+        </div>
+        <div class="group ocean">
+          <div class="group-label" data-i18n="groupOcean">水声 · WATER</div>
+          <div id="oceanRows"></div>
+        </div>
+        <div class="group nature">
+          <div class="group-label" data-i18n="groupNature">自然 · NATURE</div>
+          <div id="natureRows"></div>
+        </div>
+        <div class="group indoor">
+          <div class="group-label" data-i18n="groupIndoor">室内 · INDOOR</div>
+          <div id="indoorRows"></div>
+        </div>
+        <div class="group noise">
+          <div class="group-label" data-i18n="groupNoise">噪声 · NOISE</div>
+          <div id="noiseRows"></div>
+        </div>
+        <div class="group space">
+          <div class="group-label" data-i18n="groupSpace">太空 · SPACE</div>
+          <div id="spaceRows"></div>
+        </div>
+        <div class="group healing">
+          <div class="group-label" data-i18n="groupHealing">低频共鸣 · RESONANCE</div>
+          <div id="healingRows"></div>
         </div>
       </div>
-      <div id="myMixRows"></div>
-    </div>
-    <div class="group mymix" id="diamondPresetGroup" style="display:none">
-      <div class="group-label-row">
-        <div class="group-label" data-i18n="diamondPresetGroupLabel">钻石💎专属配方</div>
+      <div class="group mymix" id="myMixGroup">
+        <div class="group-label-row">
+          <div class="group-label" data-i18n="groupMyMix">我的组合 · MY MIX</div>
+          <div class="save-mix-btn" id="saveMixBtn" data-i18n-aria="myMixSaveBtnTitle" aria-label="保存当前组合">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+        </div>
+        <div id="myMixRows"></div>
       </div>
-      <div id="diamondPresetRows"></div>
+      <div class="group mymix" id="diamondPresetGroup" style="display:none">
+        <div class="group-label-row">
+          <div class="group-label" data-i18n="diamondPresetGroupLabel">钻石💎专属配方</div>
+        </div>
+        <div id="diamondPresetRows"></div>
+      </div>
     </div>
-    <!-- 自定义助眠音：用户从自己手机里选一段录音/音乐，纯本地混音，不上传、不联网、不经过
-         任何服务器——所以不需要、也没有能力做内容审核（见CustomSound模块顶部注释，那里
-         有更完整的设计取舍说明）。 -->
-    <div class="group mymix" id="customSoundGroup">
-      <div class="group-label-row">
-        <div class="group-label" data-i18n="groupCustomSound">我的助眠音 · MY SOUND</div>
-        <div class="save-mix-btn" id="addCustomSoundBtn" data-i18n-aria="customSoundAddTitle" aria-label="添加我自己的助眠音">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+
+    <!-- ========== 视图三：定时（含渐入唤醒/呼吸引导次级区块） ========== -->
+    <div class="tab-view" id="view-timer" style="display:none">
+      <div class="group">
+        <div class="group-label" data-i18n="timerGroupLabel">定时关闭 · TIMER</div>
+        <div class="timer-choices" id="timerChoices"></div>
+      </div>
+      <!-- 渐入唤醒：跟睡眠定时器（倒计时渐出）相对的"对称功能"——不是改倒计时本身的行为
+           （那是给"想睡着"用的，不该在那头再加一个会把人叫醒的逻辑），而是单独一组可选的
+           "过一段时间后轻柔唤醒我"选项，纯本地实现，见 WakeFadeAlarm 模块。 -->
+      <div class="wake-alarm-row" id="wakeAlarmGroup">
+        <div class="group-label" data-i18n="groupWakeAlarm">渐入唤醒 · WAKE UP</div>
+        <div class="timer-choices" id="wakeAlarmChoices"></div>
+        <div class="timer-status">
+          <span id="wakeAlarmLabel" data-i18n="wakeAlarmNotSet">未设置渐入唤醒</span>
+          <button id="wakeAlarmCancelBtn" data-i18n="wakeAlarmCancelBtn">取消唤醒</button>
+        </div>
+        <!-- 互查发现的真实风险：WakeFadeAlarm模块自己的代码注释里诚实承认了"App进程被系统杀掉
+             就不会响、只能靠系统通知兜底"这件事，但这个边界之前只写在代码注释里，用户在界面上
+             完全看不到、也不会被提醒——万一用户拿它当真正闹钟用（比如"叫我起来上班/赶飞机"这种
+             有实际后果的场景），遇到小概率的进程被杀情况却毫无预警，属于对可靠性的隐性过度承诺。
+             补一行克制的小字说明，不夸大、也不吓唬人，就是诚实告知这个边界。 -->
+        <p class="wake-alarm-hint" data-i18n="wakeAlarmReliabilityHint">轻量级渐入唤醒，不建议用于必须准时叫醒的场合（如赶飞机、吃药提醒）</p>
+      </div>
+      <!-- 入睡呼吸引导：可选，不是播放前强制的步骤——直接点"开始播放"完全不受影响。 -->
+      <button class="breathing-entry-btn" id="breathingGuideBtn" data-i18n="breathingEntryBtn">先做2分钟呼吸引导</button>
+    </div>
+
+    <!-- ========== 视图四：我的 ========== -->
+    <div class="tab-view" id="view-me" style="display:none">
+      <p class="app-slogan" data-i18n="appSlogan" style="padding-top:14px">White noise for relaxation and a calm bedtime routine</p>
+      <!-- 睡眠日志摘要：只显示"连续陪伴X晚 · 本周共X小时"这一行简单摘要，不是详细的每夜记录页——
+           详细数据（每夜时长、用的什么组合）确实记录在 SleepLog 模块里，但按用户要求的范围，
+           界面上只需要呈现这一句简单摘要。完全没数据前（新用户）整行隐藏，不占视觉空间。 -->
+      <div class="sleep-log-line" id="sleepLogLine" style="display:none"></div>
+      <div class="me-list">
+        <div class="me-row" id="meMembershipRow">
+          <span class="me-row-label" data-i18n="meMembership">会员与订阅</span>
+          <span class="me-row-right"><span class="member-badge" id="memberBadge" data-i18n="memberBadge">会员</span><span class="chev">›</span></span>
+        </div>
+        <div class="me-row" id="meShareRow">
+          <span class="me-row-label" data-i18n="shareBtnTitle">分享眠窗</span>
+          <span class="me-row-right"><span class="chev">›</span></span>
+        </div>
+        <!-- 语言行复用现有 #langBtn 的弹出逻辑（绑定见 buildLangMenu 下方），所以保留这个 id -->
+        <div class="me-row" id="langBtn">
+          <span class="me-row-label" data-i18n="languagePickerLabel">语言</span>
+          <span class="me-row-right"><span class="chev">›</span></span>
         </div>
       </div>
-      <p class="custom-sound-hint" id="customSoundHintText" data-i18n="customSoundHint">从手机里选一段你自己的录音或音乐，只会保存在你自己手机本地，不会上传、不会被任何人听到或分享。</p>
-      <div id="customSoundRows"></div>
-      <input type="file" id="customSoundFileInput" accept="audio/*" style="display:none">
-    </div>
-    <div class="group featured" id="featuredGroup" style="display:none">
-      <div class="group-label" data-i18n="featuredLabel">为你精选 · 会员专享</div>
-      <div class="featured-row" id="featuredRow"></div>
-    </div>
-    <div class="group rain">
-      <div class="group-label" data-i18n="groupRain">雨 · RAIN</div>
-      <div id="rainRows"></div>
-    </div>
-    <div class="group snow">
-      <div class="group-label" data-i18n="groupSnow">雪 · SNOW</div>
-      <div id="snowRows"></div>
-    </div>
-    <div class="group cabin">
-      <div class="group-label" data-i18n="groupCabin">木屋 · CABIN</div>
-      <div id="cabinRows"></div>
-    </div>
-    <div class="group more">
-      <div class="group-label" data-i18n="groupMore">更多质感 · EXTRA</div>
-      <div id="moreRows"></div>
-    </div>
-    <div class="group moresnow">
-      <div class="group-label" data-i18n="groupMoreSnow">雪夜市井 · CITY SNOW</div>
-      <div id="moreSnowRows"></div>
-    </div>
-
-    <div class="group travel">
-      <div class="group-label" data-i18n="groupTravel">旅途 · TRAVEL</div>
-      <div id="travelRows"></div>
-    </div>
-
-    <div class="group starry">
-      <div class="group-label" data-i18n="groupStarry">星空 · NIGHT SKY</div>
-      <div id="starryRows"></div>
-    </div>
-
-    <div class="group glimmer">
-      <div class="group-label" data-i18n="groupGlimmer">微光 · GLIMMER</div>
-      <div id="glimmerRows"></div>
-    </div>
-
-    <div class="group ocean">
-      <div class="group-label" data-i18n="groupOcean">水声 · WATER</div>
-      <div id="oceanRows"></div>
-    </div>
-
-    <div class="group nature">
-      <div class="group-label" data-i18n="groupNature">自然 · NATURE</div>
-      <div id="natureRows"></div>
-    </div>
-
-    <div class="group indoor">
-      <div class="group-label" data-i18n="groupIndoor">室内 · INDOOR</div>
-      <div id="indoorRows"></div>
-    </div>
-
-    <div class="group noise">
-      <div class="group-label" data-i18n="groupNoise">噪声 · NOISE</div>
-      <div id="noiseRows"></div>
-    </div>
-
-    <div class="group space">
-      <div class="group-label" data-i18n="groupSpace">太空 · SPACE</div>
-      <div id="spaceRows"></div>
-    </div>
-
-    <div class="group healing">
-      <div class="group-label" data-i18n="groupHealing">低频共鸣 · RESONANCE</div>
-      <div id="healingRows"></div>
-    </div>
-
-    <div class="iso-toggle-box">
-      <div class="iso-toggle-text">
-        <div class="iso-toggle-title"><span data-i18n="isoToggleTitle">深睡频率律动</span><span class="lock" id="isoLock" style="display:none;"></span></div>
-        <div class="iso-toggle-sub" data-i18n="isoToggleSub">作用于星空 / 微光主题 · 建议佩戴耳机</div>
+      <!-- 自定义助眠音：用户从自己手机里选一段录音/音乐，纯本地混音，不上传、不联网、不经过
+           任何服务器——所以不需要、也没有能力做内容审核（见CustomSound模块顶部注释，那里
+           有更完整的设计取舍说明）。 -->
+      <div class="group mymix" id="customSoundGroup">
+        <div class="group-label-row">
+          <div class="group-label" data-i18n="groupCustomSound">我的助眠音 · MY SOUND</div>
+          <div class="save-mix-btn" id="addCustomSoundBtn" data-i18n-aria="customSoundAddTitle" aria-label="添加我自己的助眠音">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+        </div>
+        <p class="custom-sound-hint" id="customSoundHintText" data-i18n="customSoundHint">从手机里选一段你自己的录音或音乐，只会保存在你自己手机本地，不会上传、不会被任何人听到或分享。</p>
+        <div id="customSoundRows"></div>
+        <input type="file" id="customSoundFileInput" accept="audio/*" style="display:none">
       </div>
-      <label class="iso-switch">
-        <input type="checkbox" id="isoToggle">
-        <span class="iso-slider"></span>
-      </label>
-    </div>
-
-    <div class="iso-toggle-box">
-      <div class="iso-toggle-text">
-        <div class="iso-toggle-title" data-i18n="greetToggleTitle">温馨问候</div>
-        <div class="iso-toggle-sub" data-i18n="greetToggleSub">偶尔在打开App时显示一句话，不喜欢可以关掉</div>
+      <div class="me-list">
+        <a href="#" class="me-row" id="termsLink">
+          <span class="me-row-label" data-i18n="footerTerms">服务条款</span>
+          <span class="me-row-right"><span class="chev">›</span></span>
+        </a>
+        <a href="#" class="me-row" id="privacyLink">
+          <span class="me-row-label" data-i18n="footerPrivacy">隐私政策</span>
+          <span class="me-row-right"><span class="chev">›</span></span>
+        </a>
+        <a href="#" class="me-row" id="supportLink">
+          <span class="me-row-label" data-i18n="footerSupport">联系反馈</span>
+          <span class="me-row-right"><span class="chev">›</span></span>
+        </a>
+        <a href="#" class="me-row" id="helpRefundLink">
+          <span class="me-row-label" data-i18n="helpRefundLinkLabel">退款与帮助</span>
+          <span class="me-row-right"><span class="chev">›</span></span>
+        </a>
+        <a href="#" class="me-row" id="accountLink">
+          <span class="me-row-label" data-i18n="accountLinkLogin">登录</span>
+          <span class="me-row-right"><span class="chev">›</span></span>
+        </a>
       </div>
-      <label class="iso-switch">
-        <input type="checkbox" id="greetToggle" checked>
-        <span class="iso-slider"></span>
-      </label>
-    </div>
-
-    <div class="iso-toggle-box">
-      <div class="iso-toggle-text">
-        <div class="iso-toggle-title" data-i18n="bedtimeToggleTitle">睡前提醒</div>
-        <div class="iso-toggle-sub" data-i18n="bedtimeToggleSub">在你平时睡前，轻轻提醒一句，默认关闭，随时可以关</div>
+      <div class="group-label" data-i18n="mePrefsLabel" style="padding-top:16px">偏好开关 · PREFERENCES</div>
+      <div class="iso-toggle-box">
+        <div class="iso-toggle-text">
+          <div class="iso-toggle-title"><span data-i18n="isoToggleTitle">深睡频率律动</span><span class="lock" id="isoLock" style="display:none;"></span></div>
+          <div class="iso-toggle-sub" data-i18n="isoToggleSub">作用于星空 / 微光主题 · 建议佩戴耳机</div>
+        </div>
+        <label class="iso-switch">
+          <input type="checkbox" id="isoToggle">
+          <span class="iso-slider"></span>
+        </label>
       </div>
-      <label class="iso-switch">
-        <input type="checkbox" id="bedtimeToggle">
-        <span class="iso-slider"></span>
-      </label>
-    </div>
-
-    <div class="greet-text" id="greetText" style="display:none"></div>
-    <!-- 渐入唤醒：跟睡眠定时器（倒计时渐出）相对的"对称功能"——不是改倒计时本身的行为
-         （那是给"想睡着"用的，不该在那头再加一个会把人叫醒的逻辑），而是单独一组可选的
-         "过一段时间后轻柔唤醒我"选项，纯本地实现，见 WakeFadeAlarm 模块。 -->
-    <div class="wake-alarm-row" id="wakeAlarmGroup">
-      <div class="group-label" data-i18n="groupWakeAlarm">渐入唤醒 · WAKE UP</div>
-      <div class="timer-choices" id="wakeAlarmChoices"></div>
-      <div class="timer-status">
-        <span id="wakeAlarmLabel" data-i18n="wakeAlarmNotSet">未设置渐入唤醒</span>
-        <button id="wakeAlarmCancelBtn" data-i18n="wakeAlarmCancelBtn">取消唤醒</button>
+      <div class="iso-toggle-box">
+        <div class="iso-toggle-text">
+          <div class="iso-toggle-title" data-i18n="greetToggleTitle">温馨问候</div>
+          <div class="iso-toggle-sub" data-i18n="greetToggleSub">偶尔在打开App时显示一句话，不喜欢可以关掉</div>
+        </div>
+        <label class="iso-switch">
+          <input type="checkbox" id="greetToggle" checked>
+          <span class="iso-slider"></span>
+        </label>
       </div>
-      <!-- 互查发现的真实风险：WakeFadeAlarm模块自己的代码注释里诚实承认了"App进程被系统杀掉
-           就不会响、只能靠系统通知兜底"这件事，但这个边界之前只写在代码注释里，用户在界面上
-           完全看不到、也不会被提醒——万一用户拿它当真正闹钟用（比如"叫我起来上班/赶飞机"这种
-           有实际后果的场景），遇到小概率的进程被杀情况却毫无预警，属于对可靠性的隐性过度承诺。
-           补一行克制的小字说明，不夸大、也不吓唬人，就是诚实告知这个边界。 -->
-      <p class="wake-alarm-hint" data-i18n="wakeAlarmReliabilityHint">轻量级渐入唤醒，不建议用于必须准时叫醒的场合（如赶飞机、吃药提醒）</p>
-    </div>
-    <!-- 入睡呼吸引导：可选，不是播放前强制的步骤——直接点"开始播放"完全不受影响。 -->
-    <button class="breathing-entry-btn" id="breathingGuideBtn" data-i18n="breathingEntryBtn">先做2分钟呼吸引导</button>
-    <div class="bottom-row">
-      <div class="timer-choices" id="timerChoices"></div>
-      <button class="play-btn" id="playBtn" data-i18n-aria="playAria" aria-label="播放/暂停">
-        <svg id="playIcon" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5z" fill="currentColor"/></svg>
-        <svg id="pauseIcon" viewBox="0 0 24 24" fill="none" style="display:none"><rect x="6" y="5" width="4" height="14" fill="currentColor"/><rect x="14" y="5" width="4" height="14" fill="currentColor"/></svg>
-      </button>
-    </div>
-    <div class="hint" data-i18n="hint">画面会跟随当前音量最高的声音自动切换场景 · 声音均为实时合成，无需下载素材</div>
-    <div class="footer-links">
-      <a href="#" id="privacyLink" data-i18n="footerPrivacy">隐私政策</a>
-      <a href="#" id="termsLink" data-i18n="footerTerms">服务条款</a>
-      <a href="#" id="supportLink" data-i18n="footerSupport">联系反馈</a>
-      <!-- 第三份检查清单"问题9"：用户想退款时如果找不到入口，容易直接去商店给1星——
-           supportLink 只是发邮件、没有任何退款指引，这里加一条独立入口，不依赖用户先联系客服
-           才能看到操作步骤 -->
-      <a href="#" id="helpRefundLink" data-i18n="helpRefundLinkLabel">退款与帮助</a>
-      <!-- 账号入口：登录/注册/手机号验证码都在这里，未登录显示"登录"、已登录显示"我的账号"（AuthUI.refresh 动态切换） -->
-      <a href="#" id="accountLink" data-i18n="accountLinkLogin">登录</a>
+      <div class="iso-toggle-box">
+        <div class="iso-toggle-text">
+          <div class="iso-toggle-title" data-i18n="bedtimeToggleTitle">睡前提醒</div>
+          <div class="iso-toggle-sub" data-i18n="bedtimeToggleSub">在你平时睡前，轻轻提醒一句，默认关闭，随时可以关</div>
+        </div>
+        <label class="iso-switch">
+          <input type="checkbox" id="bedtimeToggle">
+          <span class="iso-slider"></span>
+        </label>
+      </div>
     </div>
   </div>
+
+  <!-- 播放 FAB：浮在底部导航上方，沿用 #playBtn（含 playIcon/pauseIcon），不另造播放逻辑 -->
+  <div class="fab-stack">
+    <!-- 防误触锁定按钮：只在播放中出现（见 TouchLock 模块），睡前场景下被子和翻身的误触
+         是这个品类的高频打断源，比任何"音质优化"都更影响信任。 -->
+    <button class="icon-btn" id="touchLockBtn" data-i18n-aria="lockBtnTitle" aria-label="锁定屏幕防误触" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </button>
+    <button class="play-btn play-fab" id="playBtn" data-i18n-aria="playAria" aria-label="播放/暂停">
+      <svg id="playIcon" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5z" fill="currentColor"/></svg>
+      <svg id="pauseIcon" viewBox="0 0 24 24" fill="none" style="display:none"><rect x="6" y="5" width="4" height="14" fill="currentColor"/><rect x="14" y="5" width="4" height="14" fill="currentColor"/></svg>
+    </button>
+  </div>
+
+  <nav class="tabbar">
+    <button class="tab-btn active" data-tab="scenes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 10h18M9 4v14"/></svg>
+      <span data-i18n="tabScenes">场景</span>
+    </button>
+    <button class="tab-btn" data-tab="mix">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h10M18 8h2M4 16h4M12 16h8"/><circle cx="16" cy="8" r="2"/><circle cx="10" cy="16" r="2"/></svg>
+      <span data-i18n="tabMix">混音</span>
+    </button>
+    <button class="tab-btn" data-tab="timer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>
+      <span data-i18n="tabTimer">定时</span>
+    </button>
+    <button class="tab-btn" data-tab="me">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-5.5 8-5.5s6.5 1.5 8 5.5"/></svg>
+      <span data-i18n="tabMe">我的</span>
+    </button>
+  </nav>
 </div>
 
 <div class="paywall-modal" id="paywallModal">
@@ -2085,6 +2248,10 @@ function addSoundRow(def){
   row.appendChild(input);
   row.appendChild(pctDiv);
   const container = ROW_CONTAINERS[def.group] || ROW_CONTAINERS.moreRows;
+  // 混音页"正在播放"列表需要把行临时移走：记下它原来的 group 容器和原始顺序，
+  // 音量归 0 时能原样放回（不销毁节点，行上的事件绑定全部保留）
+  row._homeContainer = container;
+  row._homeIndex = container.children.length;
   container.appendChild(row);
 
   // 上面已经直接拿到了 input / nameDiv 这两个元素的引用，不需要再用 querySelector 重新查一次
@@ -3361,7 +3528,7 @@ if(document.getElementById('touchLockBtn')){
 }
 
 /* ===================== 定时功能 ===================== */
-const TIMER_OPTIONS=[{key:'timerOpt30m',minutes:30},{key:'timerOpt60m',minutes:60},{key:'timerOpt2h',minutes:120},{key:'timerOpt3h',minutes:180},{key:'timerOpt5h',minutes:300},{key:'timerOpt8h',minutes:480}];
+const TIMER_OPTIONS=[{key:'timerOpt15m',minutes:15},{key:'timerOpt30m',minutes:30},{key:'timerOpt60m',minutes:60},{key:'timerOpt90m',minutes:90}];
 const timerChoicesEl=document.getElementById('timerChoices');
 TIMER_OPTIONS.forEach(opt=>{
   const btn=document.createElement('button'); btn.textContent=I18N.t(opt.key); btn.dataset.i18nKey=opt.key;
@@ -5114,6 +5281,8 @@ const ShareApp = (function(){
 })();
 
 async function updateVideoLayer(name){
+  // 切走场景时取消进行中的会员场景试看计时（15 秒内切走就不弹付费墙）
+  if(typeof SceneVideoPreview!=='undefined') SceneVideoPreview.onSceneMaybeChanged(name);
   const entry = SCENE_VIDEO[name];
   if(!entry){
     // ⚠️ 真实bug修复：这里之前只是把两个video元素的active样式类去掉（视觉上隐藏），
@@ -5142,9 +5311,14 @@ async function updateVideoLayer(name){
     const sliderId = Object.keys(SCENE_ID_ALIAS).find(k=>SCENE_ID_ALIAS[k]===name) || name;
     const grandfathered = typeof FreeScenesGrandfather!=='undefined' && FreeScenesGrandfather.isGrandfathered(sliderId);
     if(!grandfathered && !Membership.isPremium()){
-      Membership.promptUpgrade(name); // 非会员、且不在祖父条款保护范围内：弹付费墙，不下载视频；声音本身不受影响，继续正常播放
-      if(currentVideoScene===name) currentVideoScene=null;
-      return;
+      // 先试看 15 秒真实画面再弹付费墙（每个场景每会话一次，见 SceneVideoPreview）。
+      // 试看过的场景回到原来的行为：直接弹付费墙，不下载视频；声音本身不受影响，继续正常播放。
+      if(!SceneVideoPreview.tryArm(name)){
+        Membership.promptUpgrade(name);
+        if(currentVideoScene===name) currentVideoScene=null;
+        return;
+      }
+      // 已 armed 试看计时：继续走下面的下载/播放流程，15 秒后由 SceneVideoPreview 收尾弹一次付费墙
     }
     try{
       src = await resolveRemoteSrc(name, entry.remote);
@@ -5563,12 +5737,14 @@ function buildLangMenu(){
     menu.appendChild(btn);
   });
 }
-document.getElementById('langBtn').addEventListener('click', ()=>{
+// 「我的」页的语言行复用了 langBtn 这个 id（行里有子元素），点击判断要用 closest 包住整行
+const langBtnEl=document.getElementById('langBtn');
+if(langBtnEl) langBtnEl.addEventListener('click', ()=>{
   document.getElementById('langMenu').classList.toggle('show');
 });
 document.addEventListener('click', (e)=>{
   const menu=document.getElementById('langMenu');
-  if(!menu.contains(e.target) && e.target.id!=='langBtn') menu.classList.remove('show');
+  if(!menu.contains(e.target) && !e.target.closest('#langBtn')) menu.classList.remove('show');
 });
 
 function refreshLockIcons(){
@@ -5579,6 +5755,16 @@ function refreshLockIcons(){
       if(!existingLock){ const s=document.createElement('span'); s.className='lock'; s.innerHTML=LOCK_SVG; nameEl.appendChild(s); }
     } else if(existingLock){
       existingLock.remove();
+    }
+  });
+  // 场景大卡上的锁标同样跟着会员状态刷新
+  document.querySelectorAll('#sceneCardsRoot .scene-card').forEach(card=>{
+    const id=card.dataset.id;
+    const existing=card.querySelector('.scene-card-lock');
+    if(isPremiumScene(id) && !Membership.isPremium()){
+      if(!existing){ const s=document.createElement('span'); s.className='scene-card-lock'; s.innerHTML=LOCK_SVG; card.appendChild(s); }
+    } else if(existing){
+      existing.remove();
     }
   });
   refreshIsoLock();
@@ -5981,13 +6167,223 @@ window.onLanguageChanged = function(){
   if(typeof SleepLog!=='undefined') SleepLog.render(); // 摘要行里的"小时/分钟"单位文字也是 I18N.t()，同样要跟着重渲染
   if(typeof WakeFadeAlarm!=='undefined') WakeFadeAlarm.render();
   if(typeof BreathingGuide!=='undefined') BreathingGuide.relabel(); // 呼吸引导"完成"文案同理，停在那个状态时切语言要跟着刷新
+  if(typeof SceneCardsUI!=='undefined') SceneCardsUI.render(); // 场景大卡名字走 I18N.sceneLabel()，切语言要重建
+  if(typeof MixUI!=='undefined') MixUI.updateAddBtn();
 };
+
+/* ===================== 底部抽屉导航（场景 / 混音 / 定时 / 我的） ===================== */
+const Tabs=(function(){
+  const VIEWS=['scenes','mix','timer','me'];
+  function show(name){
+    VIEWS.forEach(v=>{
+      const el=document.getElementById('view-'+v);
+      if(el) el.style.display=(v===name)?'':'none';
+    });
+    document.querySelectorAll('.tabbar .tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+    if(name==='scenes' && typeof SceneCardsUI!=='undefined') SceneCardsUI.maybeRender();
+    if(name==='mix' && typeof MixUI!=='undefined') MixUI.refresh();
+    if(name!=='mix' && typeof MixUI!=='undefined') MixUI.closeAddPanel(); // 离开混音页收起"添加声音"第二层
+  }
+  function init(){
+    document.querySelectorAll('.tabbar .tab-btn').forEach(b=>b.addEventListener('click', ()=>show(b.dataset.tab)));
+    show('scenes'); // 默认停在「场景」
+  }
+  return {show, init};
+})();
+
+/* ===================== 场景大卡（6 组横滑） ===================== */
+const SceneCardsUI=(function(){
+  const GROUPS=[
+    {rowKey:'rainRows',    labelKey:'groupRain'},
+    {rowKey:'oceanRows',   labelKey:'groupOcean'},
+    {rowKey:'natureRows',  labelKey:'groupNature'},
+    {rowKey:'indoorRows',  labelKey:'groupIndoor'},
+    {rowKey:'spaceRows',   labelKey:'groupSpace'},
+    {rowKey:'healingRows', labelKey:'groupHealing'},
+  ];
+  let renderedCount=-1;
+  function render(){
+    const root=document.getElementById('sceneCardsRoot');
+    if(!root) return;
+    root.innerHTML='';
+    GROUPS.forEach(g=>{
+      const defs=SOUND_DEFS.filter(d=>d.group===g.rowKey);
+      if(!defs.length) return;
+      const wrap=document.createElement('div'); wrap.className='scene-group';
+      const label=document.createElement('div'); label.className='group-label';
+      label.dataset.i18n=g.labelKey; label.textContent=I18N.t(g.labelKey);
+      const row=document.createElement('div'); row.className='scene-cards';
+      defs.forEach(d=>row.appendChild(makeCard(d)));
+      wrap.appendChild(label); wrap.appendChild(row);
+      root.appendChild(wrap);
+    });
+    renderedCount=SOUND_DEFS.length;
+    syncActive();
+  }
+  function makeCard(d){
+    const card=document.createElement('div'); card.className='scene-card'; card.dataset.id=d.id;
+    const name=document.createElement('div'); name.className='scene-card-name';
+    name.textContent=I18N.sceneLabel(d.id);
+    card.appendChild(name);
+    if(isPremiumScene(d.id) && !Membership.isPremium()){
+      const lock=document.createElement('span'); lock.className='scene-card-lock'; lock.innerHTML=LOCK_SVG;
+      card.appendChild(lock);
+    }
+    card.addEventListener('click', ()=>{
+      // 点卡 = 把该声音音量设为它的 default（default 为 0 就用 60%），再派发 input 事件——
+      // 开声、切画面、会员拦截走的都是现有那条链路，这里不另造逻辑
+      const input=document.querySelector('input[type=range][data-id="'+d.id+'"]');
+      if(!input) return;
+      input.value=(d.default>0 ? d.default : 60);
+      input.dispatchEvent(new Event('input'));
+      if(!playing) playBtn.click();
+    });
+    return card;
+  }
+  function syncActive(){
+    document.querySelectorAll('#sceneCardsRoot .scene-card').forEach(c=>{
+      const input=document.querySelector('input[type=range][data-id="'+c.dataset.id+'"]');
+      c.classList.toggle('active', !!(input && parseInt(input.value,10)>0));
+    });
+  }
+  // 远端场景（remote-scenes.js 是启动后异步拉取的）进来时 SOUND_DEFS 会变长，那时再重建一次
+  function maybeRender(){ if(renderedCount!==SOUND_DEFS.length) render(); }
+  return {render, maybeRender, syncActive};
+})();
+
+/* ===================== 混音页（正在响的滑杆 + 二级"添加声音"） ===================== */
+const MixUI=(function(){
+  function rowsBox(){ return document.getElementById('mixActiveRows'); }
+  // 音量>0 → 行移到混音列表；归 0 → 按原始顺序放回它自己的 group 容器（节点不销毁）
+  function syncPlace(inp){
+    const row=inp.closest && inp.closest('.sound-row');
+    if(!row || !row._homeContainer) return;
+    const box=rowsBox(); if(!box) return;
+    const val=parseInt(inp.value,10)||0;
+    if(val>0){
+      if(row.parentNode!==box) box.appendChild(row);
+    } else if(row.parentNode===box){
+      const home=row._homeContainer;
+      let ref=null;
+      for(const child of home.children){
+        if((child._homeIndex||0)>(row._homeIndex||0)){ ref=child; break; }
+      }
+      home.insertBefore(row, ref);
+    }
+    updateEmpty();
+  }
+  function refresh(){
+    document.querySelectorAll('input[type=range][data-id]').forEach(syncPlace);
+    updateEmpty();
+  }
+  function updateEmpty(){
+    const hint=document.getElementById('mixEmptyHint');
+    const box=rowsBox();
+    if(hint && box) hint.style.display=box.childElementCount ? 'none' : '';
+  }
+  function toggleAddPanel(){
+    const p=document.getElementById('addSoundPanel'); if(!p) return;
+    p.style.display=(p.style.display==='none' || !p.style.display) ? '' : 'none';
+    updateAddBtn();
+  }
+  function closeAddPanel(){
+    const p=document.getElementById('addSoundPanel'); if(!p) return;
+    p.style.display='none'; updateAddBtn();
+  }
+  function updateAddBtn(){
+    const b=document.getElementById('addSoundBtn');
+    const p=document.getElementById('addSoundPanel');
+    if(b && p) b.textContent=I18N.t(p.style.display==='none' ? 'addSoundBtn' : 'addSoundBtnOpen');
+  }
+  return {syncPlace, refresh, updateEmpty, toggleAddPanel, closeAddPanel, updateAddBtn};
+})();
+// 所有音量变化（拖滑杆、最近播放 chip、我的组合、钻石配方、名字点击归零……）都走同一个
+// input 事件出口，这里用捕获代理统一同步"混音列表"和"场景大卡高亮"，不用挨个改调用点
+document.addEventListener('input', (e)=>{
+  if(e.target && e.target.type==='range' && e.target.dataset && e.target.dataset.id){
+    MixUI.syncPlace(e.target);
+    SceneCardsUI.syncActive();
+  }
+}, true);
+
+/* ===================== 会员场景 15 秒试看 ===================== */
+// 非会员点一个有画面的会员场景：先放 15 秒真实画面再自动弹一次付费墙（每个场景每会话试看一次，
+// 之后回到原来的"直接弹付费墙"行为）；15 秒内切走别的场景就取消计时，不弹。
+const SceneVideoPreview=(function(){
+  const PREVIEW_MS=15000;
+  const used=new Set();
+  let timer=null, scene=null, pill=null;
+  function cancel(){
+    if(timer){ clearTimeout(timer); timer=null; }
+    scene=null; hidePill();
+  }
+  // 返回 true 表示本次允许试看（调用方继续走正常的视频加载流程）；false 表示该直接弹付费墙
+  function tryArm(name){
+    if(used.has(name)) return false;
+    used.add(name);
+    cancel();
+    scene=name;
+    showPill();
+    timer=setTimeout(()=>{
+      timer=null;
+      const s=scene; scene=null; hidePill();
+      // 试看结束：撤掉试看画面（回到矢量动画），只弹这一次付费墙
+      if(typeof videoA!=='undefined'){ videoA.classList.remove('active'); try{videoA.pause();}catch(e){} }
+      if(typeof videoB!=='undefined'){ videoB.classList.remove('active'); try{videoB.pause();}catch(e){} }
+      if(currentVideoScene===s) currentVideoScene=null;
+      Membership.promptUpgrade(s);
+    }, PREVIEW_MS);
+    return true;
+  }
+  // updateVideoLayer 每次调用都会过这里：切到别的场景（或回到无视频场景）就取消试看
+  function onSceneMaybeChanged(name){ if(timer && name!==scene) cancel(); }
+  function showPill(){
+    hidePill();
+    pill=document.createElement('div'); pill.className='scene-preview-pill';
+    const t=document.createElement('span'); t.textContent=I18N.t('scenePreviewHint');
+    const btn=document.createElement('button'); btn.textContent=I18N.t('scenePreviewUnlock');
+    btn.addEventListener('click', ()=>{
+      const s=scene; cancel();
+      if(s) Membership.promptUpgrade(s);
+    });
+    pill.appendChild(t); pill.appendChild(btn);
+    document.body.appendChild(pill);
+  }
+  function hidePill(){ if(pill){ pill.remove(); pill=null; } }
+  return {tryArm, cancel, onSceneMaybeChanged};
+})();
 
 /* ===================== 初始化 ===================== */
 I18N.applyToDOM();
 buildLangMenu();
 Membership.renderBadge();
 buildRows();
+SceneCardsUI.render();
+Tabs.init();
+// 「定时」页四个时长胶囊由 TIMER_OPTIONS 生成，"关闭"胶囊追加在最后，点击复用现有取消逻辑
+(function(){
+  const box=document.getElementById('timerChoices');
+  if(box){
+    const off=document.createElement('button');
+    off.dataset.i18nKey='timerOff'; off.textContent=I18N.t('timerOff');
+    off.addEventListener('click', ()=>{
+      const cancelBtn=document.getElementById('cancelTimerBtn');
+      if(cancelBtn) cancelBtn.click();
+    });
+    box.appendChild(off);
+  }
+})();
+MixUI.refresh();
+MixUI.updateAddBtn();
+const addSoundBtnEl=document.getElementById('addSoundBtn');
+if(addSoundBtnEl) addSoundBtnEl.addEventListener('click', ()=>MixUI.toggleAddPanel());
+// 「我的」页：会员与订阅（已入会→管理说明；未入会→升级页）、分享
+const meMembershipRow=document.getElementById('meMembershipRow');
+if(meMembershipRow) meMembershipRow.addEventListener('click', ()=>{
+  if(Membership.isPremium()) openManageBadge(); else openBuyoutPaywall();
+});
+const meShareRow=document.getElementById('meShareRow');
+if(meShareRow) meShareRow.addEventListener('click', ()=>ShareApp.share());
 RecentPlay.renderRecent();
 CustomMixes.render();
 FeaturedUpsell.render();
@@ -5997,16 +6393,13 @@ if(typeof RenewalReminder!=='undefined') RenewalReminder.schedule(); // 启动�
 if(typeof SleepLog!=='undefined') SleepLog.render(); // 启动时就把"连续X天/本周陪伴时长"摘要显示出来，不用等用户先播放一次
 if(typeof WakeFadeAlarm!=='undefined') WakeFadeAlarm.render(); // 如果上次设置的渐入唤醒还没到时间，启动时要恢复显示倒计时状态
 
-const shareBtn=document.getElementById('shareBtn');
-if(shareBtn) shareBtn.addEventListener('click', ()=>ShareApp.share());
 const saveMixBtn=document.getElementById('saveMixBtn');
 if(saveMixBtn) saveMixBtn.addEventListener('click', ()=>CustomMixes.saveCurrent());
 // streakBannerCta / streakBannerDismiss 不在这里固定绑定点击行为——这个横幅现在被分享提醒、
 // 买断提醒、会员徽章说明三种场景复用，每次 showActionBanner() 显示横幅时会按当前用途重新
 // 赋值 .onclick（分享 / 买断 / 关闭），这里不能再额外 addEventListener，否则会跟动态行为重复触发
 
-const memberBadgeEl=document.getElementById('memberBadge');
-if(memberBadgeEl) memberBadgeEl.addEventListener('click', ()=>openManageBadge());
+// memberBadge 现在嵌在「我的」页的"会员与订阅"行里，整行点击已统一处理，这里不再单独绑定
 
 const greetToggleEl=document.getElementById('greetToggle');
 if(greetToggleEl){
