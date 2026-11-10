@@ -13,7 +13,7 @@ android {
         applicationId "com.lugman.nightwindow"
         minSdk = rootProject.ext.minSdkVersion
         targetSdk = rootProject.ext.targetSdkVersion
-        versionCode 11
+        versionCode 12
         versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
