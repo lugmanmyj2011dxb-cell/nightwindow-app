@@ -111,6 +111,25 @@ function isDowngradePurchase(targetPlan){
   const targetRank = TIER_RANK[targetPlan] || 0;
   return targetRank <= currentRank;
 }
+// 判断 RevenueCat/平台返回的错误是不是"降级购买被拒"。
+// 场景：用户取消了年付的自动续费，但权益还在有效期内；此时本地 Membership 状态可能已过期
+// （isPremium() 返回 false），导致 isDowngradePurchase() 没拦住，请求打到平台被拒。
+// 不同平台/语言的报错文案不同，这里按关键词匹配，命中即视为降级错误。
+function isDowngradeError(err){
+  if(!err) return false;
+  const msg = (err.message || err.toString() || '').toLowerCase();
+  const code = err.code ? String(err.code) : '';
+  const downgradeKeywords = [
+    '档位', '更高', '失去现有的权益', '降级',
+    'already have a higher', 'higher tier', 'downgrade',
+    'existing entitlement', 'already subscribed'
+  ];
+  if(downgradeKeywords.some(k => msg.includes(k.toLowerCase()))) return true;
+  // RevenueCat 在安卓上对降级场景可能返回 PURCHASE_INVALID_ERROR，
+  // 但这个码也可能涵盖其他购买失败，所以只在文案也含降级信号时才认定。
+  if(code === 'PURCHASE_INVALID_ERROR' && /tier|entitlement|higher|existing|subscription/.test(msg)) return true;
+  return false;
+}
 
 function currentCurrency(){
   // zh-CN 语言环境默认展示人民币（对应大陆微信/支付宝渠道），其余语言展示美元参考价
@@ -305,6 +324,10 @@ function renderPlanList(){
         // 这是正常操作，不是故障，不应该弹一个"出错了"的提示吓用户，静默忽略即可。
         if(err && err.message === 'CANCELLED'){
           // 什么都不做
+        }else if(isDowngradeError(err)){
+          // 降级购买被平台拦截：当前本地状态可能已过期（比如用户取消了自动续费但权益还在有效期），
+          // RevenueCat/Google Play 会拒绝向更低档位的购买。用友好文案替代平台的原始报错。
+          alert(I18N.t('downgradePurchaseBlocked'));
         }else{
           alert(err.message || String(err));
         }
