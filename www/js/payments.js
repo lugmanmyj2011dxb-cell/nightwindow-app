@@ -276,7 +276,7 @@ const Payments = (function(){
           // iOS 的 StoreKit 分支不校验这个字段，所以问题只在安卓暴露。
           // 正确做法是先用 getProducts 从商店拿到完整的 StoreProduct（含 productCategory、
           // 价格、标题等 SDK 内部需要的字段），再把整个对象传进 purchaseStoreProduct。
-          const { products } = await Purchases.getProducts({ productIds: [productId] });
+          const { products } = await Purchases.getProducts({ productIdentifiers: [productId] });
           const storeProduct = (products || []).find(
             p => p && normalizeProductId(p.identifier) === productId
           ) || (products || [])[0];
